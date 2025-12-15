@@ -1,0 +1,173 @@
+import React, { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import {
+  AiFillHeart,
+  AiFillStar,
+  AiOutlineEye,
+  AiOutlineHeart,
+  AiOutlineShoppingCart,
+  AiOutlineStar,
+} from "react-icons/ai"
+import { MdOutlineEdit } from "react-icons/md"
+import ProductDetailsCard from "./ProductDetailsCard"
+import { useDispatch, useSelector } from "react-redux"
+import {
+  addToWishlist,
+  getAllWishList,
+  removeFromWishlist,
+} from "../../../redux/reducer/wishListSlice"
+import toast from "react-hot-toast"
+
+const ProductCard = ({ data, index }) => {
+  const [click, setClick] = useState(false)
+  const navigate = useNavigate()
+  const [open, setOpen] = useState(false)
+  const dispatch = useDispatch()
+
+  const d = data?.title
+
+  const product_name = d?.replace(/\s+/g, "-")
+  const { user } = useSelector((state) => state.auth)
+
+  const { wishproducts } = useSelector((state) => state.wishlist)
+
+  useEffect(() => {
+    const isWished = wishproducts.some((item) => item._id === data._id)
+    setClick(isWished)
+  }, [wishproducts, data._id])
+
+  const handleWishlist = async () => {
+    try {
+      if (!click) {
+        await dispatch(addToWishlist(data._id)).unwrap()
+        toast.success("Added to wishlist")
+        setClick(true)
+      } else {
+        await dispatch(removeFromWishlist(data._id)).unwrap()
+        toast.success("Removed from wishlist")
+        setClick(false)
+      }
+    } catch (error) {
+      toast.error("Something went wrong")
+    }
+  }
+
+  return (
+    <div
+      className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer "
+      key={index}
+    >
+      <div className="flex justify-end"></div>
+      <Link to={`/products/${product_name}`}>
+        <img
+          src={data.image}
+          alt=""
+          className="w-full h-[170px] object-contain"
+        />
+      </Link>
+      <Link to="/">
+        <h5 className={`pt-3 text-[15px] text-blue-400 pb-3`}>
+          {data?.shop_name}
+        </h5>
+      </Link>
+      <Link to={`/products/${product_name}`}>
+        <h4 className="pb-3 font-[500]">
+          {data.title?.length > 40
+            ? data.title.slice(0, 40) + "..."
+            : data.title}
+        </h4>
+        <div className="flex ">
+          <AiFillStar
+            className="mr-2 cursor-pointer "
+            color="#F6BA00"
+            size={20}
+          />
+          <AiFillStar
+            className="mr-2 cursor-pointer "
+            color="#F6BA00"
+            size={20}
+          />
+          <AiFillStar
+            className="mr-2 cursor-pointer "
+            color="#F6BA00"
+            size={20}
+          />
+          <AiFillStar
+            className="mr-2 cursor-pointer "
+            color="#F6BA00"
+            size={20}
+          />
+          <AiOutlineStar
+            className="mr-2 cursor-pointer "
+            color="#F6BA00"
+            size={20}
+          />
+        </div>
+        <div className="py-2 flex items-center justify-between">
+          <div className="flex">
+            <h5 className={`font-bold text-[18px] text-[#333] font-Roboto`}>
+              ${data.price === 0 ? data.price : data.discount_price}
+            </h5>
+            <h4
+              className={`font-[500] text-[16px] text-[#d55b45] pl-3 mt-[-4px] line-through`}
+            >
+              {data.price ? data.price + "$" : null}
+            </h4>
+          </div>
+          <span className="font-[600] text-[17px] text-[#47c747]">
+            {data.total_sell} Sold
+          </span>
+        </div>
+      </Link>
+      {/* side option */}
+      <div>
+        {click ? (
+          <AiFillHeart
+            size={22}
+            className="cursor-pointer absolute right-2 top-5"
+            onClick={handleWishlist}
+            color={click ? "red" : "#333"}
+            title="remove from wishlist"
+          />
+        ) : (
+          <AiOutlineHeart
+            size={22}
+            className="cursor-pointer absolute right-2 top-5"
+            onClick={handleWishlist}
+            color={click ? "red" : "#333"}
+            title="Add to Wishlist "
+          />
+        )}
+        <AiOutlineEye
+          size={22}
+          className="cursor-pointer absolute right-2 top-14"
+          onClick={() => setOpen(!open)}
+          color="#333"
+          title="Quick View"
+        />
+        <AiOutlineShoppingCart
+          size={25}
+          className="cursor-pointer absolute right-2 top-24"
+          onClick={() => setOpen(!open)}
+          color="#444"
+          title="Add to Card"
+        />
+        {user?.role === "admin" && (
+          <MdOutlineEdit
+            size={25}
+            className="cursor-pointer absolute right-2 top-34"
+            onClick={() => {
+              navigate(`/create-product`, { state: { product: data } })
+            }}
+            color="#444"
+            title="edit products"
+          />
+        )}
+
+        {open ? <ProductDetailsCard data={data} setOpen={setOpen} /> : null}
+      </div>
+    </div>
+  )
+}
+
+export default ProductCard
