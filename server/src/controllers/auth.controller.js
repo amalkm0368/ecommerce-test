@@ -12,7 +12,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ msg: "All fields are required" })
     }
     const isValidPhoneNumber = (phone) => {
-      const phoneRegex = /\d{10}$/
+      const phoneRegex = /^\d{10}$/
       return phoneRegex.test(phone)
     }
     if (!isValidPhoneNumber(phone)) {

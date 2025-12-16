@@ -98,9 +98,14 @@ const Register = () => {
               type="tel"
               value={form.phone}
               maxLength={10}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              pattern="[0-9]{10}"
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, '') // Only allow digits
+                setForm({ ...form, phone: value })
+              }}
               className="mt-2 w-full px-4 py-2 text-sm rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
               required
+              placeholder="1234567890"
             />
           </div>
         </div>
