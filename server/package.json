@@ -6,7 +6,6 @@
     "dev": "nodemon src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/server.js"
-   
   },
   "keywords": [],
   "author": "",
@@ -14,6 +13,7 @@
   "type": "module",
   "description": "",
   "dependencies": {
+    "@fluidjs/multer-cloudinary": "^1.0.4",
     "bcryptjs": "^3.0.2",
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
@@ -21,8 +21,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.0",
-    "multer": "^2.0.2",
-    "multer-storage-cloudinary": "^4.0.0"
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
